@@ -14,4 +14,4 @@ npm-debug.log
 yarn-error.log
 /.idea
 /.vscode
-/app/jwtrs256/logout/*.key
+/app/jwtrs256/logout/*.json
