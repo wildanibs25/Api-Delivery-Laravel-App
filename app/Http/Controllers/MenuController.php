@@ -71,6 +71,11 @@ class MenuController extends Controller
 
             $file = $request->file('image');
             $fileName = $file->getClientOriginalName();
+            
+            if(strlen($fileName) > 40){
+                $fileName = substr($fileName, 0, 30) . "..." . substr($fileName, -10);
+            }
+
             $finalName = date("YmdHis") .'-'. $fileName;
 
             $request->file('image')->storeAs('menus/',$finalName, 'public');
@@ -183,6 +188,11 @@ class MenuController extends Controller
 
                 $file = $request->file('image');
                 $fileName = $file->getClientOriginalName();
+
+                if(strlen($fileName) > 40){
+                   $fileName = substr($fileName, 0, 30) . "..." . substr($fileName, -10);
+                }
+
                 $finalName = date("YmdHis") .'-'. $fileName;
 
                 $request->file('image')->storeAs('menus/',$finalName, 'public');

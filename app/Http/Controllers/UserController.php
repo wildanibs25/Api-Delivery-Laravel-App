@@ -269,6 +269,11 @@ class UserController extends Controller
 
                 $file = $request->file('photo');
                 $fileName = $file->getClientOriginalName();
+
+                if(strlen($fileName) > 40){
+                    $fileName = substr($fileName, 0, 30) . "..." . substr($fileName, -10);
+                }
+
                 $finalName = date("YmdHis") .'-'. $fileName;
 
                 $request->file('photo')->storeAs('fotos/',$finalName, 'public');
