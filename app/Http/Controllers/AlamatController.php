@@ -79,9 +79,7 @@ class AlamatController extends Controller
 
         $id = VerifyToken::AuthCheck()->sub;
 
-        $data = $request->all();
-
-        $validator = Validator::make($data, [
+        $validator = Validator::make($request->all(), [
             'alamat_lengkap' => 'required',
             'sebagai' => 'required',
         ]);
@@ -164,10 +162,9 @@ class AlamatController extends Controller
      * @param  \App\Models\Alamat  $alamat
      * @return \Illuminate\Http\Response
      */
-    public function update(Alamat $alamat, $id)
+    public function update(Request $request, Alamat $alamat)
     {
-        $data = request()->all();
-        $validator = Validator::make($data, [
+        $validator = Validator::make($request->all(), [
             'alamat_lengkap',
             'sebagai',
         ]);
@@ -178,7 +175,7 @@ class AlamatController extends Controller
 
         try{
 
-            $alamat = $alamat->find($id)->update([
+            $alamat = $alamat->update([
                 'alamat_lengkap' => request()->alamat_lengkap,
                 'sebagai' => request()->sebagai,
             ]);
@@ -205,12 +202,12 @@ class AlamatController extends Controller
      * @param  \App\Models\Alamat  $alamat
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Alamat $alamat, $id)
+    public function destroy(Alamat $alamat)
     {
 
         try{
 
-            $alamat->find($id)->delete();
+            $alamat->delete();
 
             return response()->json([
                 'success' => true,

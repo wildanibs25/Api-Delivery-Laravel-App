@@ -20,9 +20,11 @@ class ItemController extends Controller
 
         try{
 
-            $where = ['id_user_item' => VerifyToken::AuthCheck()->sub, 'nota_item' => 'Belum Ada'];
+            $where = [
+                'id_user_item' => VerifyToken::AuthCheck()->sub,
+                 'nota_item' => 'Belum Ada'
+                ];
 
-            // $data = Item::where($where)->join("menu", "menu.id_menu", "item.id_menu_item")->get();
             $data = Item::where($where)->with('menu')->get();
 
             return response()->json([
@@ -58,8 +60,7 @@ class ItemController extends Controller
     public function store(Request $request)
     {
 
-        $data = $request->all();
-        $validator = Validator::make($data, [
+        $validator = Validator::make($request->all(), [
             'id_menu_item' => 'required',
         ]);
 
@@ -135,8 +136,7 @@ class ItemController extends Controller
     public function update(Request $request, Item $item)
     {
 
-        $data = $request->all();
-        $validator = Validator::make($data, [
+        $validator = Validator::make($request->all(), [
             'id_item' => 'required',
             'qty' => 'required',
         ]);
@@ -174,8 +174,7 @@ class ItemController extends Controller
     public function destroy(Request $request, Item $item)
     {
 
-        $data = $request->all();
-        $validator = Validator::make($data, [
+        $validator = Validator::make($request->all(), [
             'id_item' => 'required',
         ]);
 

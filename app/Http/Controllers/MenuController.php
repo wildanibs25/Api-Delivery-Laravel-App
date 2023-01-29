@@ -55,8 +55,7 @@ class MenuController extends Controller
     public function store(Request $request)
     {
 
-        $data = $request->all();
-        $validator = Validator::make($data, [
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string',
             'price' => 'required',
             'category' => 'required',
@@ -70,11 +69,11 @@ class MenuController extends Controller
 
         try{
 
-            $file = request()->file('image');
+            $file = $request->file('image');
             $fileName = $file->getClientOriginalName();
             $finalName = date("YmdHis") .'-'. $fileName;
 
-            request()->file('image')->storeAs('menus/',$finalName, 'public');
+            $request->file('image')->storeAs('menus/',$finalName, 'public');
 
             $menu = Menu::create([
                 'nama_menu' => $request->name,
@@ -150,11 +149,10 @@ class MenuController extends Controller
      * @param  \App\Models\Menu  $menu
      * @return \Illuminate\Http\Response
      */
-    public function update(Menu $menu, $id)
+    public function update(Request $request, Menu $menu)
     {
 
-        $data = request()->all();
-        $validator = Validator::make($data, [
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string',
             'price' => 'required',
             'category' => 'required',
@@ -168,44 +166,43 @@ class MenuController extends Controller
         try{
 
             $dataMenu = [
-                'nama_menu' => request()->name,
-                'harga_menu' => request()->price,
-                'kategori_menu' => request()->category,
-                'deskripsi_menu' => request()->description,
+                'nama_menu' => $request->name,
+                'harga_menu' => $request->price,
+                'kategori_menu' => $request->category,
+                'deskripsi_menu' => $request->description,
             ];
 
-            if(request()->hasFile('image')){
+            if($request->hasFile('image')){
 
-                if(File::exists('storage/menus/'.$menu->find($id)->gambar_menu)){
-                    unlink('storage/menus/'.$menu->find($id)->gambar_menu);
+                $exploded = explode('/', $menu->gambar_menu);
+                $lastPathName = end($exploded);
+
+                if(File::exists('storage/menus/'.$lastPathName)){
+                    unlink('storage/menus/'.$lastPathName);
                 }
 
-                $file = request()->file('image');
+                $file = $request->file('image');
                 $fileName = $file->getClientOriginalName();
                 $finalName = date("YmdHis") .'-'. $fileName;
 
-                request()->file('image')->storeAs('menus/',$finalName, 'public');
+                $request->file('image')->storeAs('menus/',$finalName, 'public');
 
                 $dataMenu += [ 'gambar_menu' => 'http://192.168.43.222:8000'.Storage::url('menus/'.$finalName), ];
             }
 
-            if(request()->status_menu){
+            if($request->status_menu){
 
-                $dataMenu += [ 'status_menu' => request()->status_menu ];
-
-            }
-
-            $menu = $menu->find($id)->update($dataMenu);
-
-            if($menu){
-
-                 return response()->json([
-                    'success' => true,
-                    'message' => 'Menu updated successfully',
-                    'data' => $menu
-                ], 200);
+                $dataMenu += [ 'status_menu' => $request->status_menu ];
 
             }
+
+            $menu = $menu->update($dataMenu);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Menu updated successfully',
+                'data' => $menu
+            ], 200);
 
         }catch(Exception $e){
 
@@ -223,12 +220,19 @@ class MenuController extends Controller
      * @param  \App\Models\Menu  $menu
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Menu $menu, $id)
+    public function destroy(Menu $menu)
     {
 
         try{
 
-            $menu->find($id)->delete();
+            $exploded = explode('/', $menu->gambar_menu);
+            $lastPathName = end($exploded);
+
+            if(File::exists('storage/menus/'.$lastPathName)){
+                unlink('storage/menus/'.$lastPathName);
+            }
+
+            $menu->delete();
 
             return response()->json([
                 'success' => true,

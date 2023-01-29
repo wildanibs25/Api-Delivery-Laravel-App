@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\JWTRS256\VerifyToken;
 use App\Models\Item;
 use App\Models\Pesanan;
-use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -91,8 +90,8 @@ class PesananController extends Controller
     {
 
         $id = VerifyToken::AuthCheck()->sub;
-        $data = $request->all();
-        $validator = Validator::make($data, [
+
+        $validator = Validator::make($request->all(), [
             'id_alamat_pesanan'=> 'required',
             'total_harga'=> 'required',
         ]);

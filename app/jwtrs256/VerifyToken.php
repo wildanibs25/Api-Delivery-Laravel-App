@@ -18,9 +18,21 @@ class VerifyToken extends Controller
 
         }
 
-        if(VerifyToken::filterToList()){
+        $fileDecode = array();
 
-            throw new Exception("You've been logged out");
+        if($my_file = file_get_contents('../app/jwtrs256/logout/ListLogout.json')){
+
+            $fileDecode = json_decode($my_file);
+
+        }
+
+        if(count((array)$fileDecode) !== 0){
+
+            if(VerifyToken::filterToList()){
+
+                throw new Exception("You've been logged out");
+            }
+
         }
 
         return $data;
@@ -28,13 +40,14 @@ class VerifyToken extends Controller
     }
 
     private static function filterToList(){
+
         $my_file = json_decode(file_get_contents('../app/jwtrs256/logout/ListLogout.json'));
 
-       return array_filter(
-            $my_file,
-            function($obj){
-                return $obj->token === request()->bearerToken();;
-            });
+        return array_filter(
+                $my_file,
+                function($obj){
+                    return $obj->token === request()->bearerToken();
+                });
     }
 
     private static function decodeData($token)

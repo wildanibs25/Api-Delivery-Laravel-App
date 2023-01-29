@@ -17,7 +17,9 @@ class GetToken extends Controller
 
         }
 
-        if(! Hash::check($request->password, $attempt->password)){
+        $b64 = base64_decode(str_replace(array('-', '_'), array('+', '/'), $request->password));
+
+        if(! Hash::check($b64, $attempt->password)){
 
             return throw new Exception('Invalid Password');
 
@@ -72,4 +74,5 @@ class GetToken extends Controller
 
         }
     }
+
 }

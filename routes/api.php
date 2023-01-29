@@ -44,8 +44,8 @@ Route::group(['middleware' => ['AuthCek']], function()
 
         // Kelola Menu (Admin)
         Route::post('add-menu', [MenuController::class, 'store']);
-        Route::post('update-menu/{id}', [MenuController::class, 'update']);
-        Route::post('delete-menu/{id}', [MenuController::class, 'destroy']);
+        Route::post('update-menu/{menu}', [MenuController::class, 'update']);
+        Route::post('delete-menu/{menu}', [MenuController::class, 'destroy']);
 
         // Kelola Alamat (Admin)
         Route::get('alamat-admin/{user}', [AlamatController::class, 'indexAdmin']);
@@ -73,8 +73,8 @@ Route::group(['middleware' => ['AuthCek']], function()
     Route::get('alamat', [AlamatController::class, 'index']);
     Route::get('detail-alamat/{alamat}', [AlamatController::class, 'show']);
     Route::post('add-alamat', [AlamatController::class, 'store']);
-    Route::post('update-alamat/{id}', [AlamatController::class, 'update']);
-    Route::post('delete-alamat/{id}', [AlamatController::class, 'destroy']);
+    Route::post('update-alamat/{alamat}', [AlamatController::class, 'update']);
+    Route::post('delete-alamat/{alamat}', [AlamatController::class, 'destroy']);
 
     // Kelola Pesanan
     Route::get('pesanan', [PesananController::class, 'index']);

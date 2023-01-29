@@ -40,11 +40,11 @@ class UserController extends Controller
 
     public function register(Request $request) //register
     {
-        $data = $request->all();
-        $validator = Validator::make($data, [
+
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string',
             'email' => 'required|email|unique:users',
-            'password' => 'required|string|min:6|max:50|confirmed',
+            'password' => 'required|string|min:6|max:60|confirmed',
             'date' => 'required',
             'gender' => 'required',
             'number_phone' => 'required|string',
@@ -84,10 +84,10 @@ class UserController extends Controller
 
     public function authenticate(Request $request) //login
     {
-        $data = $request->all();
-        $validator = Validator::make($data, [
+
+        $validator = Validator::make($request->all(), [
             'email' => 'required|email',
-            'password' => 'required|string|min:6|max:50'
+            'password' => 'required|string|min:6|max:60'
         ]);
 
         if ($validator->fails()) {
@@ -97,6 +97,10 @@ class UserController extends Controller
         try{
 
             $token = GetToken::Auth($request);
+
+            if(!file_exists("../app/jwtrs256/logout/ListLogout.json")){
+                file_put_contents('../app/jwtrs256/logout/ListLogout.json', []);
+            }
 
             return response()->json([
                 'Success' => true,
@@ -118,26 +122,27 @@ class UserController extends Controller
         $token = $request->bearerToken();
         $date = strval(date("F d, Y H:i:s"));
 
-       if( $my_file = file_get_contents('../app/jwtrs256/logout/ListLogout.json')){
-        $fileDecode = json_decode($my_file);
+        if($my_file = file_get_contents('../app/jwtrs256/logout/ListLogout.json')){
+            $file_decode = json_decode($my_file);
 
-        foreach($fileDecode as $value){
-            $list[] = $value;
+            foreach($file_decode as $value){
+                $list[] = $value;
+            }
+
+            if(count((array)$list) >= 100){
+                $list = [];
+            }
+
+            array_push($list, ["date" => $date, "token" => $token]);
+
+        }else{
+
+            array_push($list, ["date" => $date, "token" => $token]);
+
         }
 
-        if(count((array)$list) >= 100){
-            $list = [];
-        }
-
-        array_push($list, ["date" => $date, "token" => $token]);
-
-       }else{
-
-        array_push($list, ["date" => $date, "token" => $token]);
-
-       }
-
-        if (file_put_contents('../app/jwtrs256/logout/ListLogout.json', json_encode($list, JSON_PRETTY_PRINT))){
+        $list_file = file_put_contents('../app/jwtrs256/logout/ListLogout.json', json_encode($list, JSON_PRETTY_PRINT));
+        if ($list_file){
             return response()->json([
                'success' => true,
             ], 200);
@@ -154,7 +159,6 @@ class UserController extends Controller
         try{
 
             $id = VerifyToken::AuthCheck()->sub;
-
             $user = $user->find($id);
 
             if(!$user){
@@ -211,8 +215,8 @@ class UserController extends Controller
     {
 
         $id = VerifyToken::AuthCheck()->sub;
-        $data = $request->all();
-        $validator = Validator::make($data, [
+
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string',
             'email' => 'required|email',
             'old_password' => 'string|min:6|max:50',
@@ -410,7 +414,7 @@ class UserController extends Controller
             if($user->id_user === 1){
                 return response()->json([
                     'success' => false,
-                    'message' => "You don't Super Admin"
+                    'message' => "You cannot delete this Account"
                 ], 400);
             }
 
