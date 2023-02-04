@@ -55,6 +55,9 @@ Route::group(['middleware' => ['AuthCek']], function()
         Route::get('pesanan-admin', [PesananController::class, 'indexAdmin']);
         Route::post('update-pesanan-admin/{pesanan}', [PesananController::class, 'updateAdmin']);
 
+        // Kelola Item (Admin)
+        Route::get('item-admin', [ItemController::class, 'indexAdmin']);
+
     });
 
     // Kelola User

@@ -6,6 +6,7 @@ use App\JWTRS256\VerifyToken;
 use App\Models\Item;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class ItemController extends Controller
@@ -15,30 +16,54 @@ class ItemController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Item $item)
     {
 
-        try{
+        try {
 
             $where = [
                 'id_user_item' => VerifyToken::AuthCheck()->sub,
-                 'nota_item' => 'Belum Ada'
-                ];
+                'nota_item' => 'Belum Ada'
+            ];
 
-            $data = Item::where($where)->with('menu')->get();
+            $data = $item->where($where)->with('menu')->get();
 
             return response()->json([
                 'data' => $data,
             ], 200);
 
-        }catch(Exception $e){
+        } catch (Exception $e) {
 
             return response()->json([
                 'error' => $e->getMessage()
-            ],404);
-
+            ], 404);
         }
+    }
 
+    public function indexAdmin(Item $item)
+    {
+        try {
+
+            $data = $item
+            ->select('id_menu_item', DB::raw('sum(qty) as qty'))
+            ->whereNotIn('nota_item', ['Belum Ada'])
+            ->groupBy('id_menu_item')
+            ->get();
+
+            foreach($data as $d){
+                $d->menu = $d->menu;
+            }
+
+            return response()->json([
+                'data' => $data,
+            ], 200);
+
+        } catch (Exception $e) {
+
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 404);
+        }
     }
 
     /**
@@ -68,7 +93,7 @@ class ItemController extends Controller
             return response()->json(['error' => $validator->messages()], 422);
         }
 
-        try{
+        try {
 
             $id_user = VerifyToken::AuthCheck()->sub;
             $id_menu = $request->id_menu_item;
@@ -77,11 +102,10 @@ class ItemController extends Controller
 
             $cek = item::where($where)->first();
 
-            if($cek){
+            if ($cek) {
 
                 $item = Item::find($cek->id_item)->update(['qty' => $cek->qty + 1,]);
-
-            }else{
+            } else {
                 $item = Item::create([
                     'id_menu_item' => $id_menu,
                     'id_user_item' => $id_user,
@@ -94,14 +118,12 @@ class ItemController extends Controller
                 'data' => $item
             ], 200);
 
-        }catch(Exception $e){
+        } catch (Exception $e) {
 
             return response()->json([
                 'error' => $e->getMessage()
-            ],400);
-
+            ], 400);
         }
-
     }
 
     /**
@@ -145,7 +167,7 @@ class ItemController extends Controller
             return response()->json(['error' => $validator->messages()], 422);
         }
 
-        try{
+        try {
 
             $item = $item->find($request->id_item)->update(['qty' => $request->qty,]);
 
@@ -155,14 +177,12 @@ class ItemController extends Controller
                 // 'data' => ItemController::index()
             ], 200);
 
-        }catch(Exception $e){
+        } catch (Exception $e) {
 
             return response()->json([
                 'error' => $e->getMessage()
-            ],404);
-
+            ], 404);
         }
-
     }
 
     /**
@@ -182,7 +202,7 @@ class ItemController extends Controller
             return response()->json(['error' => $validator->messages()], 422);
         }
 
-        try{
+        try {
 
             $item->find($request->id_item)->delete();
 
@@ -191,14 +211,11 @@ class ItemController extends Controller
                 'message' => 'Item deleted successfully'
             ], 200);
 
-        }catch(Exception $e){
+        } catch (Exception $e) {
 
             return response()->json([
                 'error' => $e->getMessage()
-            ],404);
-
+            ], 404);
         }
-
     }
-
 }

@@ -43,12 +43,12 @@ class PesananController extends Controller
 
     }
 
-    public function indexAdmin()
+    public function indexAdmin(Pesanan $pesanan)
     {
 
         try{
 
-            $data = Pesanan::orderBy('created_at', 'DESC')->get();
+            $data = $pesanan->all();
 
             foreach( $data as $dt){
                 $dt->user = $dt->user;
