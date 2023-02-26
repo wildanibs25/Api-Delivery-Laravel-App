@@ -278,7 +278,7 @@ class UserController extends Controller
 
                 $request->file('photo')->storeAs('fotos/',$finalName, 'public');
 
-                $dataUser += [ 'foto' => 'http://192.168.43.222:8000'.Storage::url('fotos/'.$finalName), ];
+                $dataUser += [ 'foto' => Storage::url('fotos/'.$finalName), ];
 
             }
 
@@ -347,7 +347,7 @@ class UserController extends Controller
 
                 $request->file('photo')->storeAs('fotos/',$finalName, 'public');
 
-                $dataUser += [ 'foto' => 'http://192.168.43.222:8000'.Storage::url('fotos/'.$finalName), ];
+                $dataUser += [ 'foto' => Storage::url('fotos/'.$finalName), ];
             }
 
             $user = $user->update($dataUser);

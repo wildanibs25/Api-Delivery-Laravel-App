@@ -71,7 +71,7 @@ class MenuController extends Controller
 
             $file = $request->file('image');
             $fileName = $file->getClientOriginalName();
-            
+
             if(strlen($fileName) > 40){
                 $fileName = substr($fileName, 0, 30) . "..." . substr($fileName, -10);
             }
@@ -85,7 +85,7 @@ class MenuController extends Controller
                 'harga_menu' => $request->price,
                 'kategori_menu' => $request->category,
                 'deskripsi_menu' => $request->description,
-                'gambar_menu' => 'http://192.168.43.222:8000'.Storage::url('menus/'.$finalName),
+                'gambar_menu' => Storage::url('menus/'.$finalName),
             ]);
 
             return response()->json([
@@ -197,7 +197,7 @@ class MenuController extends Controller
 
                 $request->file('image')->storeAs('menus/',$finalName, 'public');
 
-                $dataMenu += [ 'gambar_menu' => 'http://192.168.43.222:8000'.Storage::url('menus/'.$finalName), ];
+                $dataMenu += [ 'gambar_menu' => Storage::url('menus/'.$finalName), ];
             }
 
             if($request->status_menu){
