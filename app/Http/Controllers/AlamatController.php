@@ -11,11 +11,6 @@ use Illuminate\Support\Facades\Validator;
 
 class AlamatController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
 
@@ -58,22 +53,6 @@ class AlamatController extends Controller
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
 
@@ -112,12 +91,6 @@ class AlamatController extends Controller
 
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Alamat  $alamat
-     * @return \Illuminate\Http\Response
-     */
     public function show(Alamat $alamat)
     {
 
@@ -144,24 +117,6 @@ class AlamatController extends Controller
 
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Alamat  $alamat
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Alamat $alamat)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Alamat  $alamat
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, Alamat $alamat)
     {
         $validator = Validator::make($request->all(), [
@@ -196,12 +151,6 @@ class AlamatController extends Controller
 
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Alamat  $alamat
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Alamat $alamat)
     {
 
