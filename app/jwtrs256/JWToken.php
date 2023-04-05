@@ -11,6 +11,7 @@ class JWToken extends Controller
 {
     public static function encode($payload, $secret)
     {
+
         $header = array('typ' => 'JWT', 'alg' => 'RS256');
 
         $segments = array(
@@ -30,6 +31,7 @@ class JWToken extends Controller
 
     public static function decode($jwt, $secret)
     {
+
         $tks = explode('.', $jwt);
 
         if (count($tks) != 3) {
@@ -65,6 +67,7 @@ class JWToken extends Controller
 
     private static function urlSafeB64Encode($data)
     {
+
         $b64 = base64_encode($data);
 
         return str_replace(array('+', '/', '\r', '\n', '='),
@@ -75,6 +78,7 @@ class JWToken extends Controller
 
     private static function urlSafeB64Decode($b64)
     {
+
         $b64 = str_replace(array('-', '_'),
                 array('+', '/'),
                 $b64);
@@ -85,16 +89,20 @@ class JWToken extends Controller
 
     private static function generateRSA($input, $secret)
     {
+
         if (!openssl_sign($input, $signature, $secret, OPENSSL_ALGO_SHA256)) {
             throw new Exception("Unable to sign data.");
         }
 
         return $signature;
+
     }
 
     private static function verify($signature, $input, $secret)
     {
+
         return (boolean) openssl_verify($input, $signature, $secret, OPENSSL_ALGO_SHA256);
+        
     }
 
 

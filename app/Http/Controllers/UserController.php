@@ -17,6 +17,7 @@ class UserController extends Controller
 {
     public function index(User $user)
     {
+
         try{
             $user = $user->all();
 
@@ -114,10 +115,12 @@ class UserController extends Controller
             ],401);
 
         }
+
     }
 
     public function addToList(Request $request)
     {
+
         $list = array();
         $token = $request->bearerToken();
         $date = strval(date("F d, Y H:i:s"));
@@ -153,10 +156,12 @@ class UserController extends Controller
                 'error' => 'Something went wrong'
             ], 400);
         }
+
     }
 
     public function detail(User $user)
     {
+
         try{
 
             $id = VerifyToken::AuthCheck()->sub;
@@ -183,10 +188,12 @@ class UserController extends Controller
             ],400);
 
         }
+
     }
 
     public function detailAdmin(User $user)
     {
+
         try{
 
             if(!$user){
@@ -210,6 +217,7 @@ class UserController extends Controller
             ],400);
 
         }
+
     }
 
     public function update(Request $request, User $user)
@@ -367,10 +375,12 @@ class UserController extends Controller
 
         }
 
+
     }
 
     public function destroy(User $user)
     {
+        
         try{
 
             $payload = VerifyToken::AuthCheck();

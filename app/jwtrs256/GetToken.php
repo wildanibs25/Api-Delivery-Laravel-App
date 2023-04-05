@@ -47,7 +47,6 @@ class GetToken extends Controller
             'admin' => $attempt->is_admin
         );
 
-
     }
 
     private static function getRandomString($n) {
@@ -60,19 +59,21 @@ class GetToken extends Controller
         }
 
         return $randomString;
+
     }
 
-    private static function isAdmin($attempt)
+    private static function isAdmin($status)
     {
-        if($attempt){
+        if($status){
 
-            return date("YmdHis",strtotime('+4 hours'));
+            return date("YmdHis",strtotime('+8 hours'));
 
         }else{
 
             return date("YmdHis",strtotime('+2 hours'));
 
         }
+        
     }
 
 }
