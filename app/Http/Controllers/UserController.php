@@ -38,7 +38,7 @@ class UserController extends Controller
 
     }
 
-    public function register(Request $request) //register
+    public function register(Request $request)
     {
 
         $validator = Validator::make($request->all(), [
@@ -82,7 +82,7 @@ class UserController extends Controller
 
     }
 
-    public function authenticate(Request $request) //login
+    public function authenticate(Request $request)
     {
 
         $validator = Validator::make($request->all(), [
@@ -116,7 +116,7 @@ class UserController extends Controller
         }
     }
 
-    public function addToList(Request $request) //logout
+    public function addToList(Request $request)
     {
         $list = array();
         $token = $request->bearerToken();
@@ -142,6 +142,7 @@ class UserController extends Controller
         }
 
         $list_file = file_put_contents('../app/jwtrs256/logout/ListLogout.json', json_encode($list, JSON_PRETTY_PRINT));
+
         if ($list_file){
             return response()->json([
                'success' => true,

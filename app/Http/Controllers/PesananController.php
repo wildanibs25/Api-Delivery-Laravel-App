@@ -49,12 +49,12 @@ class PesananController extends Controller
             }
 
             $static = [
-                'today' => $pesanan->whereRaw('DAY(updated_at) = ' . date('d'))->where('status_pesanan', 'Finished')->sum('total_harga'),
-                'yesterday' => $pesanan->whereRaw('DAY(updated_at) = ' . date('d') - 1)->where('status_pesanan', 'Finished')->sum('total_harga'),
-                'month' => $pesanan->whereRaw('MONTH(updated_at) = ' . date('m'))->where('status_pesanan', 'Finished')->sum('total_harga'),
-                'lastMonth' => $pesanan->whereRaw('MONTH(updated_at) = ' . date('m') - 1)->where('status_pesanan', 'Finished')->sum('total_harga'),
-                'year' => $pesanan->whereRaw('YEAR(updated_at) = ' . date('Y'))->where('status_pesanan', 'Finished')->sum('total_harga'),
-                'lastYear' => $pesanan->whereRaw('YEAR(updated_at) = ' . date('Y') - 1)->where('status_pesanan', 'Finished')->sum('total_harga'),
+                'today' => $pesanan->whereRaw('DAY(created_at) = ' . date('d'))->where('status_pesanan', 'Finished')->sum('total_harga'),
+                'yesterday' => $pesanan->whereRaw('DAY(created_at) = ' . date('d') - 1)->where('status_pesanan', 'Finished')->sum('total_harga'),
+                'month' => $pesanan->whereRaw('MONTH(created_at) = ' . date('m'))->where('status_pesanan', 'Finished')->sum('total_harga'),
+                'lastMonth' => $pesanan->whereRaw('MONTH(created_at) = ' . date('m') - 1)->where('status_pesanan', 'Finished')->sum('total_harga'),
+                'year' => $pesanan->whereRaw('YEAR(created_at) = ' . date('Y'))->where('status_pesanan', 'Finished')->sum('total_harga'),
+                'lastYear' => $pesanan->whereRaw('YEAR(created_at) = ' . date('Y') - 1)->where('status_pesanan', 'Finished')->sum('total_harga'),
             ];
 
             return response()->json([
