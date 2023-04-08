@@ -159,22 +159,14 @@ class UserController extends Controller
 
     }
 
-    public function detail(User $user)
+    public function me(User $user)
     {
 
         try{
 
             $id = VerifyToken::AuthCheck()->sub;
+
             $user = $user->find($id);
-
-            if(!$user){
-
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Sorry, Data user not found.'
-                ], 404);
-
-            }
 
             return response()->json([
                 'Success' => true,
@@ -380,7 +372,7 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        
+
         try{
 
             $payload = VerifyToken::AuthCheck();

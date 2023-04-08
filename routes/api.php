@@ -63,7 +63,7 @@ Route::group(['middleware' => ['AuthCek']], function()
 
     // Kelola User
     Route::post('logout', [UserController::class, 'addToList']);
-    Route::get('detail-user', [UserController::class, 'detail']);
+    Route::get('detail-user', [UserController::class, 'me']);
     Route::post('update-user', [UserController::class, 'update']);
     Route::post('delete-user', [UserController::class, 'destroy']);
 

@@ -49,7 +49,8 @@ class GetToken extends Controller
 
     }
 
-    private static function getRandomString($n) {
+    private static function getRandomString($n)
+    {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $randomString = '';
 
@@ -73,7 +74,7 @@ class GetToken extends Controller
             return date("YmdHis",strtotime('+2 hours'));
 
         }
-        
+
     }
 
 }

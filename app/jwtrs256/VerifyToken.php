@@ -24,7 +24,7 @@ class VerifyToken extends Controller
             $fileDecode = json_decode($my_file);
         }
 
-        if (count((array)$fileDecode) !== 0) {
+        if (count((array)$fileDecode) > 0) {
 
             if (VerifyToken::filterToList($fileDecode)) {
 
@@ -52,6 +52,6 @@ class VerifyToken extends Controller
     {
 
         return JWToken::decode($token, file_get_contents('../app/jwtrs256/keys/public.key'));
-        
+
     }
 }
