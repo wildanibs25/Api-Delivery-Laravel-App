@@ -241,7 +241,7 @@ class UserController extends Controller
                 'no_hp' => $request->number_phone,
             ];
 
-            if(!empty($request->new_password)){
+            if($request->new_password){
 
                 if(!Hash::check($request->old_password, $user->find($id)->password)){
 

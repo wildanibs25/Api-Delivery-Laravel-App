@@ -30,11 +30,11 @@ Route::post('register', [UserController::class, 'register']);
 Route::post('login', [UserController::class, 'authenticate']);
 
 // Middleware User
-Route::group(['middleware' => ['AuthCek']], function()
+Route::group(['middleware' => ['AuthCheck']], function()
 {
 
     // Middleware Admin
-    Route::group(['middleware' => ['AdminCek']], function()
+    Route::group(['middleware' => ['AdminCheck']], function()
     {
         // Kelola User (Admin)
         Route::get('user', [UserController::class, 'index']);

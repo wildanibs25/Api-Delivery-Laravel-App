@@ -6,7 +6,7 @@ use App\JWTRS256\VerifyToken;
 use Closure;
 use Illuminate\Http\Request;
 
-class LevelCek
+class LevelCheck
 {
     /**
      * Handle an incoming request.
@@ -21,7 +21,7 @@ class LevelCek
        {
             return response()->json([
                 'message' => 'You do not have Administrator access'
-            ], 400);
+            ], 401);
        }
 
        return $next($request);

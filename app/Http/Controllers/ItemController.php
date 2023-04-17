@@ -75,20 +75,29 @@ class ItemController extends Controller
         try {
 
             $id_user = VerifyToken::AuthCheck()->sub;
+            
             $id_menu = $request->id_menu_item;
 
-            $where = ['id_user_item' => $id_user, 'id_menu_item' => $id_menu, 'nota_item' => 'Belum Ada'];
+            $where = [
+                'id_user_item' => $id_user,
+                'id_menu_item' => $id_menu,
+                'nota_item' => 'Belum Ada'
+            ];
 
-            $cek = item::where($where)->first();
+            $item = item::where($where)->first();
 
-            if ($cek) {
+            if ($item) {
 
-                $item = Item::find($cek->id_item)->update(['qty' => $cek->qty + 1,]);
+                $item->qty = $item->qty + 1;
+                $item->save();
+
             } else {
+
                 $item = Item::create([
                     'id_menu_item' => $id_menu,
                     'id_user_item' => $id_user,
                 ]);
+
             }
 
             return response()->json([

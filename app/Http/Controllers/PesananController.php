@@ -72,8 +72,6 @@ class PesananController extends Controller
     public function store(Request $request)
     {
 
-        $id = VerifyToken::AuthCheck()->sub;
-
         $validator = Validator::make($request->all(), [
             'id_alamat_pesanan' => 'required',
             'total_harga' => 'required',
@@ -83,24 +81,26 @@ class PesananController extends Controller
             return response()->json(['error' => $validator->messages()], 422);
         }
 
-        if ($request->total_harga === 0) {
+        if (!$request->total_harga) {
             return response()->json(['error' => 'Sorry, an error occurred!'], 421);
         }
 
         try {
 
-            $finalNota = 'INV-' . date('Y.m.d') . '-01-' . date('His');
+            $id_user = VerifyToken::AuthCheck()->sub;
 
-            $where = ['id_user_item' => $id, 'nota_item' => 'Belum Ada'];
+            $finalNota = 'INV-' . date('Y.m.d') . '-01-' . date('His');
 
             $pesanan = Pesanan::create([
                 'nota' => $finalNota,
-                'id_user_pesanan' => $id,
+                'id_user_pesanan' => $id_user,
                 'id_alamat_pesanan' => $request->id_alamat_pesanan,
                 'total_harga' => $request->total_harga,
             ]);
 
             if ($pesanan) {
+
+                $where = ['id_user_item' => $id_user, 'nota_item' => 'Belum Ada'];
 
                 Item::where($where)->update(['nota_item' => $finalNota]);
 
@@ -112,6 +112,7 @@ class PesananController extends Controller
                     'data' => $pesanan,
                 ], 200);
             }
+            
         } catch (Exception $e) {
 
             return response()->json([
