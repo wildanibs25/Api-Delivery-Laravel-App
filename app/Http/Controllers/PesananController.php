@@ -49,12 +49,12 @@ class PesananController extends Controller
             }
 
             $static = [
-                'today' => $pesanan->whereRaw('DAY(created_at) = ' . date('d'))->where('status_pesanan', 'Finished')->sum('total_harga'),
-                'yesterday' => $pesanan->whereRaw('DAY(created_at) = ' . date('d') - 1)->where('status_pesanan', 'Finished')->sum('total_harga'),
-                'month' => $pesanan->whereRaw('MONTH(created_at) = ' . date('m'))->where('status_pesanan', 'Finished')->sum('total_harga'),
-                'lastMonth' => $pesanan->whereRaw('MONTH(created_at) = ' . date('m') - 1)->where('status_pesanan', 'Finished')->sum('total_harga'),
-                'year' => $pesanan->whereRaw('YEAR(created_at) = ' . date('Y'))->where('status_pesanan', 'Finished')->sum('total_harga'),
-                'lastYear' => $pesanan->whereRaw('YEAR(created_at) = ' . date('Y') - 1)->where('status_pesanan', 'Finished')->sum('total_harga'),
+                'today' => $pesanan->where('created_at', 'LIKE', '%' . date('Y-m-d') . '%')->where('status_pesanan', 'Finished')->sum('total_harga'),
+                'yesterday' => $pesanan->where('created_at', 'LIKE', '%' . date('Y-m-d', strtotime("-1 days")) . '%')->where('status_pesanan', 'Finished')->sum('total_harga'),
+                'month' => $pesanan->where('created_at', 'LIKE', '%' . date('Y-m') . '%')->where('status_pesanan', 'Finished')->sum('total_harga'),
+                'lastMonth' => $pesanan->where('created_at', 'LIKE', '%' . date('Y-m', strtotime("-1 months")) . '%')->where('status_pesanan', 'Finished')->sum('total_harga'),
+                'year' => $pesanan->where('created_at', 'LIKE', '%' . date('Y') . '%')->where('status_pesanan', 'Finished')->sum('total_harga'),
+                'lastYear' => $pesanan->where('created_at', 'LIKE', '%' . date('Y', strtotime("-1 years")) . '%')->where('status_pesanan', 'Finished')->sum('total_harga'),
             ];
 
             return response()->json([
@@ -99,9 +99,7 @@ class PesananController extends Controller
             ]);
 
             if ($pesanan) {
-
                 $where = ['id_user_item' => $id_user, 'nota_item' => 'Belum Ada'];
-
                 Item::where($where)->update(['nota_item' => $finalNota]);
 
                 PemesananEvent::dispatch(['success' => true], 200);
@@ -112,7 +110,6 @@ class PesananController extends Controller
                     'data' => $pesanan,
                 ], 200);
             }
-            
         } catch (Exception $e) {
 
             return response()->json([
@@ -127,13 +124,11 @@ class PesananController extends Controller
         try {
 
             if (!$pesanan) {
-
                 return response()->json([
                     'success' => false,
                     'message' => 'Sorry, Data order not found.'
                 ], 404);
             } else {
-
                 $pesanan->user = $pesanan->user;
                 $pesanan->item = Item::where('nota_item', $pesanan->nota)->with('menu')->get();
                 $pesanan->alamat = $pesanan->alamat;

@@ -26,7 +26,6 @@ class JWToken extends Controller
         $segments[] = JWToken::urlsafeB64Encode($signature);
 
         return implode('.', $segments);
-
     }
 
     public static function decode($jwt, $secret)
@@ -62,7 +61,6 @@ class JWToken extends Controller
         }
 
         return $payload;
-
     }
 
     private static function urlSafeB64Encode($data)
@@ -70,21 +68,23 @@ class JWToken extends Controller
 
         $b64 = base64_encode($data);
 
-        return str_replace(array('+', '/', '\r', '\n', '='),
-                array('-', '_'),
-                $b64);
-
+        return str_replace(
+            array('+', '/', '\r', '\n', '='),
+            array('-', '_'),
+            $b64
+        );
     }
 
     private static function urlSafeB64Decode($b64)
     {
 
-        $b64 = str_replace(array('-', '_'),
-                array('+', '/'),
-                $b64);
+        $b64 = str_replace(
+            array('-', '_'),
+            array('+', '/'),
+            $b64
+        );
 
         return base64_decode($b64);
-
     }
 
     private static function generateRSA($input, $secret)
@@ -95,16 +95,11 @@ class JWToken extends Controller
         }
 
         return $signature;
-
     }
 
     private static function verify($signature, $input, $secret)
     {
 
-        return (boolean) openssl_verify($input, $signature, $secret, OPENSSL_ALGO_SHA256);
-        
+        return (bool) openssl_verify($input, $signature, $secret, OPENSSL_ALGO_SHA256);
     }
-
-
-
 }

@@ -18,25 +18,22 @@ class UserController extends Controller
     public function index(User $user)
     {
 
-        try{
+        try {
             $user = $user->all();
 
-            foreach($user as $u){
+            foreach ($user as $u) {
                 $u->pesanan = $u->pesanan;
             }
 
             return response()->json([
                 'data' => $user,
             ], 200);
-
-        }catch(Exception $e){
+        } catch (Exception $e) {
 
             return response()->json([
                 'error' => $e->getMessage()
-            ],404);
-
+            ], 404);
         }
-
     }
 
     public function register(Request $request)
@@ -56,7 +53,7 @@ class UserController extends Controller
             return response()->json(['error' => $validator->messages()], 422);
         }
 
-        try{
+        try {
 
             $user = User::create([
                 'nama' => $request->name,
@@ -72,15 +69,12 @@ class UserController extends Controller
                 'message' => 'User created successfully',
                 'data' => $user
             ], 200);
-
-        }catch(Exception $e){
+        } catch (Exception $e) {
 
             return response()->json([
                 'error' => $e->getMessage()
-            ],400);
-
+            ], 400);
         }
-
     }
 
     public function authenticate(Request $request)
@@ -95,27 +89,24 @@ class UserController extends Controller
             return response()->json(['error' => $validator->messages()], 422);
         }
 
-        try{
+        try {
 
             $token = GetToken::Auth($request);
 
-            if(!file_exists("../app/jwtrs256/logout/ListLogout.json")){
-                file_put_contents('../app/jwtrs256/logout/ListLogout.json', []);
+            if (!File::exists("../public/logout/ListLogout.json")) {
+                file_put_contents('../public/logout/ListLogout.json', []);
             }
 
             return response()->json([
                 'Success' => true,
-                'token'=> $token,
-            ],200);
-
-        }catch(Exception $e){
+                'token' => $token,
+            ], 200);
+        } catch (Exception $e) {
 
             return response()->json([
                 'error' => $e->getMessage()
-            ],401);
-
+            ], 401);
         }
-
     }
 
     public function addToList(Request $request)
@@ -125,44 +116,43 @@ class UserController extends Controller
         $token = $request->bearerToken();
         $date = strval(date("F d, Y H:i:s"));
 
-        if($my_file = file_get_contents('../app/jwtrs256/logout/ListLogout.json')){
+        if ($my_file = file_get_contents('../public/logout/ListLogout.json')) {
             $file_decode = json_decode($my_file);
 
-            foreach($file_decode as $value){
+            foreach ($file_decode as $value) {
                 $list[] = $value;
             }
 
-            if(count((array)$list) >= 100){
+            if (count((array)$list) >= 100) {
                 $list = [];
             }
 
             array_push($list, ["date" => $date, "token" => $token]);
-
-        }else{
-
+        } else {
             array_push($list, ["date" => $date, "token" => $token]);
-
         }
 
-        $list_file = file_put_contents('../app/jwtrs256/logout/ListLogout.json', json_encode($list, JSON_PRETTY_PRINT));
+        $list_file = file_put_contents(
+            '../public/logout/ListLogout.json',
+            json_encode($list, JSON_PRETTY_PRINT)
+        );
 
-        if ($list_file){
+        if ($list_file) {
             return response()->json([
-               'success' => true,
+                'success' => true,
             ], 200);
-
-        }else{
+        } else {
             return response()->json([
                 'error' => 'Something went wrong'
             ], 400);
         }
-
+        
     }
 
     public function me(User $user)
     {
 
-        try{
+        try {
 
             $id = VerifyToken::AuthCheck()->sub;
 
@@ -171,45 +161,37 @@ class UserController extends Controller
             return response()->json([
                 'Success' => true,
                 'user' => $user,
-            ],200);
-
-        }catch(Exception $e){
+            ], 200);
+        } catch (Exception $e) {
 
             return response()->json([
                 'error' => $e->getMessage()
-            ],400);
-
+            ], 400);
         }
-
     }
 
     public function detailAdmin(User $user)
     {
 
-        try{
+        try {
 
-            if(!$user){
-
+            if (!$user) {
                 return response()->json([
                     'success' => false,
                     'error' => 'Sorry, Data user not found.'
                 ], 404);
-
             }
 
             return response()->json([
                 'Success' => true,
                 'User' => $user,
-            ],200);
-
-        }catch(Exception $e){
+            ], 200);
+        } catch (Exception $e) {
 
             return response()->json([
                 'error' => $e->getMessage()
-            ],400);
-
+            ], 400);
         }
-
     }
 
     public function update(Request $request, User $user)
@@ -231,7 +213,7 @@ class UserController extends Controller
             return response()->json(['error' => $validator->messages()], 422);
         }
 
-        try{
+        try {
 
             $dataUser = [
                 'nama' => $request->name,
@@ -241,46 +223,42 @@ class UserController extends Controller
                 'no_hp' => $request->number_phone,
             ];
 
-            if($request->new_password){
-
-                if(!Hash::check($request->old_password, $user->find($id)->password)){
+            if ($request->new_password) {
+                if (!Hash::check($request->old_password, $user->find($id)->password)) {
 
                     return response()->json([
                         'success' => false,
                         'error' => 'Old Password is Invalid',
                     ], 404);
-
-                }else{
+                } else {
 
                     $dataUser += [
                         'password' => Hash::make($request->new_password),
                     ];
-
                 }
             }
 
-            if($request->hasFile('photo')){
+            if ($request->hasFile('photo')) {
 
                 $exploded = explode('/', $user->find($id)->foto);
                 $lastPathName = end($exploded);
 
-                if(File::exists('storage/fotos/'.$lastPathName)){
-                    unlink('storage/fotos/'.$lastPathName);
+                if (File::exists('storage/fotos/' . $lastPathName)) {
+                    unlink('storage/fotos/' . $lastPathName);
                 }
 
                 $file = $request->file('photo');
                 $fileName = $file->getClientOriginalName();
 
-                if(strlen($fileName) > 40){
+                if (strlen($fileName) > 40) {
                     $fileName = substr($fileName, 0, 30) . "..." . substr($fileName, -10);
                 }
 
-                $finalName = date("YmdHis") .'-'. $fileName;
+                $finalName = date("YmdHis") . '-' . $fileName;
 
-                $request->file('photo')->storeAs('fotos/',$finalName, 'public');
+                $request->file('photo')->storeAs('fotos/', $finalName, 'public');
 
-                $dataUser += [ 'foto' => Storage::url('fotos/'.$finalName), ];
-
+                $dataUser += ['foto' => Storage::url('fotos/' . $finalName),];
             }
 
             $user = $user->find($id)->update($dataUser);
@@ -290,15 +268,12 @@ class UserController extends Controller
                 'message' => 'User updated successfully',
                 'data' => $user
             ], 200);
-
-        }catch(Exception $e){
+        } catch (Exception $e) {
 
             return response()->json([
                 'error' => $e->getMessage()
-            ],404);
-
+            ], 404);
         }
-
     }
 
     public function updateAdmin(Request $request, User $user)
@@ -318,7 +293,7 @@ class UserController extends Controller
             return response()->json(['error' => $validator->messages()], 422);
         }
 
-        try{
+        try {
 
             $dataUser = [
                 'nama' => $request->name,
@@ -329,26 +304,26 @@ class UserController extends Controller
                 'is_admin' => $request->admin,
             ];
 
-            if($request->password){
+            if ($request->password) {
                 $dataUser += ['password' => Hash::make($request->password)];
             }
 
-            if($request->hasFile('photo')){
+            if ($request->hasFile('photo')) {
 
                 $exploded = explode('/', $user->foto);
                 $lastPathName = end($exploded);
 
-                if(File::exists('storage/fotos/'.$lastPathName)){
-                    unlink('storage/fotos/'.$lastPathName);
+                if (File::exists('storage/fotos/' . $lastPathName)) {
+                    unlink('storage/fotos/' . $lastPathName);
                 }
 
                 $file = $request->file('photo');
                 $fileName = $file->getClientOriginalName();
-                $finalName = date("YmdHis") .'-'. $fileName;
+                $finalName = date("YmdHis") . '-' . $fileName;
 
-                $request->file('photo')->storeAs('fotos/',$finalName, 'public');
+                $request->file('photo')->storeAs('fotos/', $finalName, 'public');
 
-                $dataUser += [ 'foto' => Storage::url('fotos/'.$finalName), ];
+                $dataUser += ['foto' => Storage::url('fotos/' . $finalName),];
             }
 
             $user = $user->update($dataUser);
@@ -358,26 +333,22 @@ class UserController extends Controller
                 'message' => 'User updated successfully',
                 'data' => $user
             ], 200);
-
-        }catch(Exception $e){
+        } catch (Exception $e) {
 
             return response()->json([
                 'error' => $e->getMessage()
-            ],404);
-
+            ], 404);
         }
-
-
     }
 
     public function destroy(User $user)
     {
 
-        try{
+        try {
 
             $payload = VerifyToken::AuthCheck();
 
-            if($payload->admin === 1){
+            if ($payload->admin === 1) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Your is Admin'
@@ -387,8 +358,8 @@ class UserController extends Controller
             $exploded = explode('/', $user->find($payload->sub)->foto);
             $lastPathName = end($exploded);
 
-            if(File::exists('storage/fotos/'.$lastPathName)){
-                unlink('storage/fotos/'.$lastPathName);
+            if (File::exists('storage/fotos/' . $lastPathName)) {
+                unlink('storage/fotos/' . $lastPathName);
             }
 
             $user->find($payload->sub)->delete();
@@ -397,29 +368,26 @@ class UserController extends Controller
                 'success' => true,
                 'message' => 'User deleted successfully'
             ], 200);
-
-        }catch(Exception $e){
+        } catch (Exception $e) {
 
             return response()->json([
                 'error' => $e->getMessage()
-            ],404);
-
+            ], 404);
         }
-
     }
 
     public function destroyAdmin(User $user)
     {
-        try{
+        try {
 
-            if(VerifyToken::AuthCheck()->sub === $user->id_user){
+            if (VerifyToken::AuthCheck()->sub === $user->id_user) {
                 return response()->json([
                     'success' => false,
                     'message' => 'This is you, Your is Admin'
                 ], 400);
             }
 
-            if($user->id_user === 1){
+            if ($user->id_user === 1) {
                 return response()->json([
                     'success' => false,
                     'message' => "You cannot delete this Account"
@@ -430,8 +398,8 @@ class UserController extends Controller
             $exploded = explode('/', $user->foto);
             $lastPathName = end($exploded);
 
-            if(File::exists('storage/fotos/'.$lastPathName)){
-                unlink('storage/fotos/'.$lastPathName);
+            if (File::exists('storage/fotos/' . $lastPathName)) {
+                unlink('storage/fotos/' . $lastPathName);
             }
 
             $user->delete();
@@ -440,15 +408,11 @@ class UserController extends Controller
                 'success' => true,
                 'message' => 'User deleted successfully'
             ], 200);
-
-        }catch(Exception $e){
+        } catch (Exception $e) {
 
             return response()->json([
                 'error' => $e->getMessage()
-            ],404);
-
+            ], 404);
         }
-
     }
-
 }

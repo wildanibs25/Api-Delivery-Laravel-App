@@ -17,14 +17,12 @@ class LevelCheck
      */
     public function handle(Request $request, Closure $next)
     {
-       if(! VerifyToken::AuthCheck()->admin)
-       {
+        if (!VerifyToken::AuthCheck()->admin) {
             return response()->json([
                 'message' => 'You do not have Administrator access'
             ], 401);
-       }
+        }
 
-       return $next($request);
-
+        return $next($request);
     }
 }

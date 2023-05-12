@@ -11,33 +11,31 @@ class GetToken extends Controller
 {
     public static function Auth($request)
     {
-        if(! $attempt = User::where('email', $request->email)->first()){
 
+        if (!$attempt = User::where('email', $request->email)->first()) {
             return throw new Exception('Invalid Email Address');
-
         }
 
-        $b64 = base64_decode(str_replace(array('-', '_'), array('+', '/'), $request->password));
+        $b64 = base64_decode(
+            str_replace(array('-', '_'), array('+', '/'), $request->password)
+        );
 
-        if(! Hash::check($b64, $attempt->password)){
-
+        if (!Hash::check($b64, $attempt->password)) {
             return throw new Exception('Invalid Password');
-
         }
 
         return GetToken::encodeData(GetToken::payload($attempt));
-
     }
 
     private static function encodeData($payload)
     {
 
         return JWToken::encode($payload, file_get_contents('../app/jwtrs256/keys/private.key'));
-
     }
 
     private static function payload($attempt)
     {
+
         return array(
             'iss'   => request()->fullUrl(),
             'iat'   => date("YmdHis"),
@@ -46,11 +44,11 @@ class GetToken extends Controller
             'jti'   => GetToken::getRandomString(32),
             'admin' => $attempt->is_admin
         );
-
     }
 
     private static function getRandomString($n)
     {
+
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $randomString = '';
 
@@ -60,21 +58,15 @@ class GetToken extends Controller
         }
 
         return $randomString;
-
     }
 
     private static function isAdmin($status)
     {
-        if($status){
 
-            return date("YmdHis",strtotime('+8 hours'));
-
-        }else{
-
-            return date("YmdHis",strtotime('+2 hours'));
-
+        if ($status) {
+            return date("YmdHis", strtotime('+8 hours'));
+        } else {
+            return date("YmdHis", strtotime('+2 hours'));
         }
-
     }
-
 }

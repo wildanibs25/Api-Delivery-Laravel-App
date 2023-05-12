@@ -14,7 +14,7 @@ class AlamatController extends Controller
     public function index()
     {
 
-        try{
+        try {
 
             $id = VerifyToken::AuthCheck()->sub;
 
@@ -23,33 +23,28 @@ class AlamatController extends Controller
             return response()->json([
                 'data' => $data,
             ], 200);
-
-        }catch(Exception $e){
+        } catch (Exception $e) {
 
             return response()->json([
                 'error' => $e->getMessage()
-            ],404);
-
+            ], 404);
         }
-
     }
 
     public function indexAdmin(User $user, Alamat $alamat)
     {
-        try{
+        try {
 
             $data = $alamat->where("id_user_alamat", $user->id_user)->get();
 
             return response()->json([
                 'data' => $data,
             ], 200);
-
-        }catch(Exception $e){
+        } catch (Exception $e) {
 
             return response()->json([
                 'error' => $e->getMessage(),
-            ],404);
-
+            ], 404);
         }
     }
 
@@ -67,7 +62,7 @@ class AlamatController extends Controller
             return response()->json(['error' => $validator->messages()], 422);
         }
 
-        try{
+        try {
 
             $alamat = Alamat::create([
                 'id_user_alamat' => $id,
@@ -80,21 +75,18 @@ class AlamatController extends Controller
                 'message' => 'Addres added successfully',
                 'data' => $alamat
             ], 200);
-
-        }catch(Exception $e){
+        } catch (Exception $e) {
 
             return response()->json([
                 'error' => $e->getMessage()
-            ],400);
-
+            ], 400);
         }
-
     }
 
     public function show(Alamat $alamat)
     {
 
-        try{
+        try {
 
             if (!$alamat) {
                 return response()->json([
@@ -106,15 +98,12 @@ class AlamatController extends Controller
             return response()->json([
                 'data' => $alamat,
             ], 200);
-
-        }catch(Exception $e){
+        } catch (Exception $e) {
 
             return response()->json([
                 'error' => $e->getMessage()
-            ],404);
-
+            ], 404);
         }
-
     }
 
     public function update(Request $request, Alamat $alamat)
@@ -128,7 +117,7 @@ class AlamatController extends Controller
             return response()->json(['error' => $validator->messages()], 422);
         }
 
-        try{
+        try {
 
             $alamat = $alamat->update([
                 'alamat_lengkap' => request()->alamat_lengkap,
@@ -140,21 +129,18 @@ class AlamatController extends Controller
                 'message' => 'Alamat updated successfully',
                 'data' => $alamat
             ], 200);
-
-        }catch(Exception $e){
+        } catch (Exception $e) {
 
             return response()->json([
                 'error' => $e->getMessage()
-            ],404);
-
+            ], 404);
         }
-
     }
 
     public function destroy(Alamat $alamat)
     {
 
-        try{
+        try {
 
             $alamat->delete();
 
@@ -162,15 +148,11 @@ class AlamatController extends Controller
                 'success' => true,
                 'message' => 'Addres deleted successfully'
             ], 200);
-
-        }catch(Exception $e){
+        } catch (Exception $e) {
 
             return response()->json([
                 'error' => $e->getMessage()
-            ],404);
-
+            ], 404);
         }
-
     }
-
 }

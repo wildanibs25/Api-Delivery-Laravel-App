@@ -26,7 +26,6 @@ class ItemController extends Controller
             return response()->json([
                 'data' => $data,
             ], 200);
-
         } catch (Exception $e) {
 
             return response()->json([
@@ -40,19 +39,18 @@ class ItemController extends Controller
         try {
 
             $data = $item
-            ->select('id_menu_item', DB::raw('sum(qty) as qty'))
-            ->whereNotIn('nota_item', ['Belum Ada'])
-            ->groupBy('id_menu_item')
-            ->get();
+                ->select('id_menu_item', DB::raw('sum(qty) as qty'))
+                ->whereNotIn('nota_item', ['Belum Ada'])
+                ->groupBy('id_menu_item')
+                ->get();
 
-            foreach($data as $d){
+            foreach ($data as $d) {
                 $d->menu = $d->menu;
             }
 
             return response()->json([
                 'data' => $data,
             ], 200);
-
         } catch (Exception $e) {
 
             return response()->json([
@@ -75,7 +73,7 @@ class ItemController extends Controller
         try {
 
             $id_user = VerifyToken::AuthCheck()->sub;
-            
+
             $id_menu = $request->id_menu_item;
 
             $where = [
@@ -87,17 +85,13 @@ class ItemController extends Controller
             $item = item::where($where)->first();
 
             if ($item) {
-
                 $item->qty = $item->qty + 1;
                 $item->save();
-
             } else {
-
                 $item = Item::create([
                     'id_menu_item' => $id_menu,
                     'id_user_item' => $id_user,
                 ]);
-
             }
 
             return response()->json([
@@ -105,7 +99,6 @@ class ItemController extends Controller
                 'message' => 'Item updated successfully',
                 'data' => $item
             ], 200);
-
         } catch (Exception $e) {
 
             return response()->json([
@@ -135,7 +128,6 @@ class ItemController extends Controller
                 'message' => 'Item updated successfully',
                 // 'data' => ItemController::index()
             ], 200);
-
         } catch (Exception $e) {
 
             return response()->json([
@@ -163,7 +155,6 @@ class ItemController extends Controller
                 'success' => true,
                 'message' => 'Item deleted successfully'
             ], 200);
-
         } catch (Exception $e) {
 
             return response()->json([

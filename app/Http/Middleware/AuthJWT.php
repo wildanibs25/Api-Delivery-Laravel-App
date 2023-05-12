@@ -18,14 +18,12 @@ class AuthJWT
      */
     public function handle(Request $request, Closure $next)
     {
-        try{
+        try {
 
             $user = VerifyToken::AuthCheck();
-
-        }catch(Exception $e){
+        } catch (Exception $e) {
 
             return response()->json(['message' => $e->getMessage()], 412);
-
         }
 
         return $next($request);

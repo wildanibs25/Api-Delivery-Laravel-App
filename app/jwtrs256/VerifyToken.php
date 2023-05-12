@@ -13,27 +13,22 @@ class VerifyToken extends Controller
         $data = VerifyToken::decodeData(request()->bearerToken());
 
         if (date("YmdHis") >= $data->exp) {
-
             throw new Exception('Token is Expired');
         }
 
         $fileDecode = array();
 
-        if ($my_file = file_get_contents('../app/jwtrs256/logout/ListLogout.json')) {
-
+        if ($my_file = file_get_contents('../public/logout/ListLogout.json')) {
             $fileDecode = json_decode($my_file);
         }
 
         if (count((array)$fileDecode) > 0) {
-
             if (VerifyToken::filterToList($fileDecode)) {
-
                 throw new Exception("You've been logged out");
             }
         }
 
         return $data;
-
     }
 
     private static function filterToList($fileDecode)
@@ -45,13 +40,11 @@ class VerifyToken extends Controller
                 return $obj->token === request()->bearerToken();
             }
         );
-
     }
 
     private static function decodeData($token)
     {
 
         return JWToken::decode($token, file_get_contents('../app/jwtrs256/keys/public.key'));
-
     }
 }

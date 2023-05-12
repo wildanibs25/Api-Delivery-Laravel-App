@@ -14,22 +14,19 @@ class MenuController extends Controller
 {
     public function index()
     {
-        try{
+        try {
 
             $data = Menu::all();
 
             return response()->json([
                 'data' => $data,
             ], 200);
-
-        }catch(Exception $e){
+        } catch (Exception $e) {
 
             return response()->json([
                 'error' => $e->getMessage()
-            ],404);
-
+            ], 404);
         }
-
     }
 
     public function store(Request $request)
@@ -47,25 +44,25 @@ class MenuController extends Controller
             return response()->json(['error' => $validator->messages()], 422);
         }
 
-        try{
+        try {
 
             $file = $request->file('image');
             $fileName = $file->getClientOriginalName();
 
-            if(strlen($fileName) > 40){
+            if (strlen($fileName) > 40) {
                 $fileName = substr($fileName, 0, 30) . "..." . substr($fileName, -10);
             }
 
-            $finalName = date("YmdHis") .'-'. $fileName;
+            $finalName = date("YmdHis") . '-' . $fileName;
 
-            $request->file('image')->storeAs('menus/',$finalName, 'public');
+            $request->file('image')->storeAs('menus/', $finalName, 'public');
 
             $menu = Menu::create([
                 'nama_menu' => $request->name,
                 'harga_menu' => $request->price,
                 'kategori_menu' => $request->category,
                 'deskripsi_menu' => $request->description,
-                'gambar_menu' => Storage::url('menus/'.$finalName),
+                'gambar_menu' => Storage::url('menus/' . $finalName),
             ]);
 
             return response()->json([
@@ -73,21 +70,18 @@ class MenuController extends Controller
                 'message' => 'Menu added successfully',
                 'data' => $menu
             ], 200);
-
-        }catch(Exception $e){
+        } catch (Exception $e) {
 
             return response()->json([
                 'error' => $e->getMessage()
-            ],400);
-
+            ], 400);
         }
-
     }
 
     public function show(Menu $menu)
     {
 
-        try{
+        try {
 
             if (!$menu) {
                 return response()->json([
@@ -99,15 +93,12 @@ class MenuController extends Controller
             return response()->json([
                 'data' => $menu,
             ], 200);
-
-        }catch(Exception $e){
+        } catch (Exception $e) {
 
             return response()->json([
                 'error' => $e->getMessage()
-            ],400);
-
+            ], 400);
         }
-
     }
 
     public function update(Request $request, Menu $menu)
@@ -124,7 +115,7 @@ class MenuController extends Controller
             return response()->json(['error' => $validator->messages()], 422);
         }
 
-        try{
+        try {
 
             $dataMenu = [
                 'nama_menu' => $request->name,
@@ -133,33 +124,30 @@ class MenuController extends Controller
                 'deskripsi_menu' => $request->description,
             ];
 
-            if($request->hasFile('image')){
-
+            if ($request->hasFile('image')) {
                 $exploded = explode('/', $menu->gambar_menu);
                 $lastPathName = end($exploded);
 
-                if(File::exists('storage/menus/'.$lastPathName)){
-                    unlink('storage/menus/'.$lastPathName);
+                if (File::exists('storage/menus/' . $lastPathName)) {
+                    unlink('storage/menus/' . $lastPathName);
                 }
 
                 $file = $request->file('image');
                 $fileName = $file->getClientOriginalName();
 
-                if(strlen($fileName) > 40){
-                   $fileName = substr($fileName, 0, 30) . "..." . substr($fileName, -10);
+                if (strlen($fileName) > 40) {
+                    $fileName = substr($fileName, 0, 30) . "..." . substr($fileName, -10);
                 }
 
-                $finalName = date("YmdHis") .'-'. $fileName;
+                $finalName = date("YmdHis") . '-' . $fileName;
 
-                $request->file('image')->storeAs('menus/',$finalName, 'public');
+                $request->file('image')->storeAs('menus/', $finalName, 'public');
 
-                $dataMenu += [ 'gambar_menu' => Storage::url('menus/'.$finalName), ];
+                $dataMenu += ['gambar_menu' => Storage::url('menus/' . $finalName),];
             }
 
-            if($request->status_menu){
-
-                $dataMenu += [ 'status_menu' => $request->status_menu ];
-
+            if ($request->status_menu) {
+                $dataMenu += ['status_menu' => $request->status_menu];
             }
 
             $menu = $menu->update($dataMenu);
@@ -169,27 +157,24 @@ class MenuController extends Controller
                 'message' => 'Menu updated successfully',
                 'data' => $menu
             ], 200);
-
-        }catch(Exception $e){
+        } catch (Exception $e) {
 
             return response()->json([
                 'error' => $e->getMessage()
-            ],404);
-
+            ], 404);
         }
-
     }
 
     public function destroy(Menu $menu)
     {
 
-        try{
+        try {
 
             $exploded = explode('/', $menu->gambar_menu);
             $lastPathName = end($exploded);
 
-            if(File::exists('storage/menus/'.$lastPathName)){
-                unlink('storage/menus/'.$lastPathName);
+            if (File::exists('storage/menus/' . $lastPathName)) {
+                unlink('storage/menus/' . $lastPathName);
             }
 
             $menu->delete();
@@ -198,15 +183,11 @@ class MenuController extends Controller
                 'success' => true,
                 'message' => 'Menu deleted successfully'
             ], 200);
-
-        }catch(Exception $e){
+        } catch (Exception $e) {
 
             return response()->json([
                 'error' => $e->getMessage()
-            ],404);
-
+            ], 404);
         }
-
     }
-
 }
