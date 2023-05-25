@@ -30,7 +30,7 @@ class GetToken extends Controller
     private static function encodeData($payload)
     {
 
-        return JWToken::encode($payload, file_get_contents('../app/jwtrs256/keys/private.key'));
+        return JWToken::encode($payload, file_get_contents('../app/JWTRS256/keys/private.key'));
     }
 
     private static function payload($attempt)

@@ -45,6 +45,6 @@ class VerifyToken extends Controller
     private static function decodeData($token)
     {
 
-        return JWToken::decode($token, file_get_contents('../app/jwtrs256/keys/public.key'));
+        return JWToken::decode($token, file_get_contents('../app/JWTRS256/keys/public.key'));
     }
 }
