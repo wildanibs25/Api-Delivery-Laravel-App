@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\PemesananEvent;
 use App\Models\Menu;
 use Exception;
 use Illuminate\Http\Request;

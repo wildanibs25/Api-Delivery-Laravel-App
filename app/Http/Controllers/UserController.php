@@ -146,7 +146,7 @@ class UserController extends Controller
                 'error' => 'Something went wrong'
             ], 400);
         }
-        
+
     }
 
     public function me(User $user)
@@ -348,7 +348,7 @@ class UserController extends Controller
 
             $payload = VerifyToken::AuthCheck();
 
-            if ($payload->admin === 1) {
+            if ((int)$payload->admin === 1) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Your is Admin'
@@ -380,14 +380,14 @@ class UserController extends Controller
     {
         try {
 
-            if (VerifyToken::AuthCheck()->sub === $user->id_user) {
+            if ((int)VerifyToken::AuthCheck()->sub === (int)$user->id_user) {
                 return response()->json([
                     'success' => false,
                     'message' => 'This is you, Your is Admin'
                 ], 400);
             }
 
-            if ($user->id_user === 1) {
+            if ((int)$user->id_user === 1) {
                 return response()->json([
                     'success' => false,
                     'message' => "You cannot delete this Account"

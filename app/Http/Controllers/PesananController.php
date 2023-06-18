@@ -155,11 +155,13 @@ class PesananController extends Controller
             return response()->json(['error' => $validator->messages()], 422);
         }
 
-        if ($pesanan->id_user_pesanan !== VerifyToken::AuthCheck()->sub) {
+        if ((int)$pesanan->id_user_pesanan !== (int)VerifyToken::AuthCheck()->sub) {
             return response()->json(['message' => "You didn't Order"], 400);
         }
 
         try {
+
+            PemesananEvent::dispatch(['orderUpdate' => true], 200);
 
             $pesanan = $pesanan->update(['status_pesanan' => $request->status_pesanan]);
 
@@ -189,6 +191,8 @@ class PesananController extends Controller
         }
 
         try {
+
+            PemesananEvent::dispatch(['id_user' => $pesanan->id_user_pesanan], 200);
 
             $pesanan = $pesanan->update(['status_pesanan' => $request->status_pesanan]);
 
