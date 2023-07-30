@@ -16,11 +16,7 @@ class GetToken extends Controller
             return throw new Exception('Invalid Email Address');
         }
 
-        $b64 = base64_decode(
-            str_replace(array('-', '_'), array('+', '/'), $request->password)
-        );
-
-        if (!Hash::check($b64, $attempt->password)) {
+        if (!Hash::check($request->password, $attempt->password)) {
             return throw new Exception('Invalid Password');
         }
 
@@ -68,5 +64,11 @@ class GetToken extends Controller
         } else {
             return date("YmdHis", strtotime('+2 hours'));
         }
+    }
+
+    public static function generateCode($data)
+    {
+
+        return GetToken::encodeData($data);
     }
 }

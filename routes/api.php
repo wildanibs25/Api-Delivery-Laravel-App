@@ -5,7 +5,6 @@ use App\Http\Controllers\ItemController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PesananController;
 use App\Http\Controllers\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,19 +22,15 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-
-
 // Register dan Login
 Route::post('register', [UserController::class, 'register']);
 Route::post('login', [UserController::class, 'authenticate']);
 
 // Middleware User
-Route::group(['middleware' => ['AuthCheck']], function()
-{
+Route::group(['middleware' => ['AuthCheck']], function () {
 
     // Middleware Admin
-    Route::group(['middleware' => ['AdminCheck']], function()
-    {
+    Route::group(['middleware' => ['AdminCheck']], function () {
         // Kelola User (Admin)
         Route::get('user', [UserController::class, 'index']);
         Route::get('detail-user-admin/{user}', [UserController::class, 'detailAdmin']);
@@ -58,7 +53,6 @@ Route::group(['middleware' => ['AuthCheck']], function()
 
         // Kelola Item (Admin)
         Route::get('item-admin', [ItemController::class, 'indexAdmin']);
-
     });
 
     // Kelola User
@@ -85,6 +79,9 @@ Route::group(['middleware' => ['AuthCheck']], function()
     Route::post('add-pesanan', [PesananController::class, 'store']);
     Route::post('update-pesanan/{pesanan}', [PesananController::class, 'update']);
 
+    //Verifikasi Email
+    Route::get('regenerate-code', [UserController::class, 'reGenerateCode']);
+    Route::post('verification', [UserController::class, 'verified']);
 });
 
 // Lihat Menu

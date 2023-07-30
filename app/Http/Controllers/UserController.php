@@ -9,7 +9,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\JWTRS256\GetToken;
 use App\JWTRS256\VerifyToken;
+use App\Mail\EmailVerification;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 
@@ -64,10 +66,24 @@ class UserController extends Controller
                 'no_hp' => $request->number_phone,
             ]);
 
+            $payload = [
+                'sub' => $user->id_user,
+                'exp' => date("YmdHis", strtotime('+1 minutes')),
+            ];
+
+            $data = [
+                'code' => GetToken::generateCode($payload),
+                'token' => $request->bearerToken(),
+            ];
+
+            Mail::to($user->email)->send(new EmailVerification($data));
+
+            $token = GetToken::Auth($request);
+
             return response()->json([
                 'success' => true,
                 'message' => 'User created successfully',
-                'data' => $user
+                'token' => $token
             ], 200);
         } catch (Exception $e) {
 
@@ -146,7 +162,6 @@ class UserController extends Controller
                 'error' => 'Something went wrong'
             ], 400);
         }
-
     }
 
     public function me(User $user)
@@ -201,7 +216,7 @@ class UserController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
-            'email' => 'required|email',
+            'email' => 'required|email|unique:users',
             'old_password' => 'string|min:6|max:50',
             'new_password' => 'string|min:6|max:50|confirmed',
             'date' => 'required',
@@ -281,7 +296,7 @@ class UserController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
-            'email' => 'required|email',
+            'email' => 'required|email|unique:users',
             'password' => 'string|min:6|max:50',
             'date' => 'required',
             'gender' => 'required',
@@ -333,6 +348,74 @@ class UserController extends Controller
                 'message' => 'User updated successfully',
                 'data' => $user
             ], 200);
+        } catch (Exception $e) {
+
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 404);
+        }
+    }
+
+    public function reGenerateCode()
+    {
+        try {
+
+            $id = VerifyToken::AuthCheck()->sub;
+
+            $user = User::find($id);
+
+            $payload = [
+                'sub' => $user->id_user,
+                'exp' => date("YmdHis", strtotime('+1 minutes')),
+            ];
+
+            $data = [
+                'code' => GetToken::generateCode($payload),
+                'token' => request()->bearerToken(),
+            ];
+
+            Mail::to($user->email)->send(new EmailVerification($data));
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Generated code success',
+            ], 200);
+        } catch (Exception $e) {
+
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 404);
+        }
+    }
+
+    public function verified(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'code' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->messages()], 422);
+        }
+
+        try {
+
+            $data = VerifyToken::codeCheck($request->code);
+
+            if ($data) {
+                User::find($data->sub)->update(['email_verified_at' => now()]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Email verified successfully',
+                ], 200);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => 'The email verification is failed',
+            ], 400);
         } catch (Exception $e) {
 
             return response()->json([

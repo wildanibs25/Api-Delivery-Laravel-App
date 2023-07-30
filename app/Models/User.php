@@ -25,6 +25,7 @@ class User extends Authenticatable
     protected $fillable = [
         'nama',
         'email',
+        'email_verified_at',
         'password',
         'tgl_lahir',
         'jk',
@@ -33,20 +34,10 @@ class User extends Authenticatable
         'foto',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];

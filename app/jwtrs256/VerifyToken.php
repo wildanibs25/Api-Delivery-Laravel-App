@@ -12,7 +12,7 @@ class VerifyToken extends Controller
 
         $data = VerifyToken::decodeData(request()->bearerToken());
 
-        if (date("YmdHis") >= $data->exp) {
+        if (strtotime(date("YmdHis")) >= strtotime($data->exp)) {
             throw new Exception('Token is Expired');
         }
 
@@ -46,5 +46,22 @@ class VerifyToken extends Controller
     {
 
         return JWToken::decode($token, file_get_contents('../app/JWTRS256/keys/public.key'));
+    }
+
+    public static function codeCheck($code)
+    {
+
+        $user = VerifyToken::decodeData(request()->bearerToken());
+        $data = VerifyToken::decodeData($code);
+
+        if (strtotime(date("YmdHis")) >= strtotime($data->exp)) {
+            throw new Exception('Code is Expired');
+        }
+
+        if ($user->sub !== $data->sub) {
+            throw new Exception("The email verification is failed");
+        }
+
+        return $data;
     }
 }
