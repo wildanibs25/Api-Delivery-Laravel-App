@@ -66,6 +66,8 @@ class UserController extends Controller
                 'no_hp' => $request->number_phone,
             ]);
 
+            $token = GetToken::Auth($request);
+
             $payload = [
                 'sub' => $user->id_user,
                 'exp' => date("YmdHis", strtotime('+1 minutes')),
@@ -73,12 +75,10 @@ class UserController extends Controller
 
             $data = [
                 'code' => GetToken::generateCode($payload),
-                'token' => $request->bearerToken(),
+                'token' => $token,
             ];
 
             Mail::to($user->email)->send(new EmailVerification($data));
-
-            $token = GetToken::Auth($request);
 
             return response()->json([
                 'success' => true,
